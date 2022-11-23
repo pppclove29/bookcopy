@@ -12,6 +12,7 @@ public class HelloResponseDtoTest {
 
         HelloResponseDto dto = new HelloResponseDto(name, amount);
 
+        //당연히 같은게 맞음 근데 누가 그사이에 뭐 만지면 달라지나?
         assertThat(dto.getName()).isEqualTo(name);
         assertThat(dto.getAmount()).isEqualTo(amount);
     }
@@ -19,4 +20,5 @@ public class HelloResponseDtoTest {
 /*
     book p.73
     assertThat이 뭘까?
+    Test용
 */
