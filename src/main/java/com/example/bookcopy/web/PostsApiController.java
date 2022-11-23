@@ -11,6 +11,8 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController // Controller + ResponseBody <- 얜 또 뭐야
 public class PostsApiController {
     // 얘 왜 AutoWired없어?
+    // RequiredArgsConstructor 이 친구가 해결해준다. 이친구는 생성자를 생성해주므로 자동으로 주입이 가능하다
+    // 진짜 볼수록 놀랍다 어떻게 이렇게 최적화에 미친사람들이 있지?
     private final PostsService postsService;
 
     @PostMapping("/api/v1/posts")
