@@ -1,6 +1,9 @@
 package com.example.bookcopy.domain.posts;
 
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+
+import java.util.List;
 
 public interface PostsRepository extends JpaRepository<Posts, Long> {
     /*
@@ -10,6 +13,10 @@ public interface PostsRepository extends JpaRepository<Posts, Long> {
         공식문서
         https://docs.spring.io/spring-data/jpa/docs/current/api/org/springframework/data/jpa/repository/JpaRepository.html
     * */
+
+    // book p.147
+    @Query("select p from Posts p order by p.id desc")
+    List<Posts> findAllDesc(); // 오 이렇게 직접 만들수도 있구나, QueryDsl 참고해볼것
 }
 /*
     book p.95
