@@ -12,3 +12,7 @@ h2는 로컬 저장소를 이용하므로 볼려면 spring.h2.console.enabled=tr
 프로퍼티 아래에 설정을 해줘야 할수있네
 
 구글 등 인증을 위해 Oauth용 프로퍼티를 생성했다
+scope의 기본값은 openid, profile, email 이다
+openid가 있을 경우 각기 다른 플랫폼에대한 각기 다른 OAuth서비스가 필요하다
+
+application-oauth로 프로퍼티를 만들었기 때문에 application에서는 profile = oauth로 호출할 수 있다!
