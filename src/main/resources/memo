@@ -6,3 +6,7 @@ spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialec
 아마 데이터베이스의 지정과 jpa에서의 쿼리문 변경에 대한 처리를 담당했던 것 같다
 
 그리고 어떤 쿼리문이  실행되었는지 확인하기 위해 spring.jpa.show-sql=true 를 사용했다.
+
+h2는 로컬 저장소를 이용하므로 볼려면 spring.h2.console.enabled=true 를 추가하자
+콘솔 접근시 메인 함수를 실행하여 서버를 열고 http://localhost:8080/h2-console/ 를 통해서 들어간다
+프로퍼티 아래에 설정을 해줘야 할수있네

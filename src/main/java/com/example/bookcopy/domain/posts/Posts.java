@@ -1,5 +1,6 @@
 package com.example.bookcopy.domain.posts;
 
+import com.example.bookcopy.domain.BaseTimeEntity;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor // Dto에 사용된 RequiredArgsConstructor와 비슷한 맥락, 파라미터가 없는 생성자릉 생성한다
 @Entity // 해당 선언으로 이 클래스는 DB에 매칭될 것임을 알린다, + 절대로 Setter를 사용하지 않는다
-public class Posts {
+public class Posts extends BaseTimeEntity {
     @Id // PK필드
     @GeneratedValue(strategy = GenerationType.IDENTITY) // PK 생성규칙
     private Long id;

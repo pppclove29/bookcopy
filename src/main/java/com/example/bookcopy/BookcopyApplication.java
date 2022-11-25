@@ -2,7 +2,9 @@ package com.example.bookcopy;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 
+@EnableJpaAuditing // JPA에서 auditing(감사, 감시)을 허락한다
 @SpringBootApplication
 public class BookcopyApplication { // 프로젝트 최상단 위치, 모든 객체 읽기생성 자동설정하는 곳
 
