@@ -8,6 +8,8 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.context.annotation.RequestScope;
 
+import java.sql.SQLOutput;
+
 @RequiredArgsConstructor
 @RestController // Controller + ResponseBody <- 얜 또 뭐야
 /*
@@ -17,7 +19,7 @@ import org.springframework.web.context.annotation.RequestScope;
 @RequestMapping("/api/v1/posts")
 public class PostsApiController {
     // 얘 왜 AutoWired없어?
-    // RequiredArgsConstructor 이 친구가 해결해준다. 이친구는 생성자를 생성해주므로 자동으로 주입이 가능하다
+    // RequiredArgsConstructor가 해결해준다. 이 친구는 생성자를 생성해주므로 자동으로 주입이 가능하다
     // 진짜 볼수록 놀랍다 어떻게 이렇게 최적화에 미친사람들이 있지?
     private final PostsService postsService;
 
@@ -46,7 +48,17 @@ public class PostsApiController {
     @GetMapping("/{id}")
     public PostsResponseDto findById(
             @PathVariable Long id) {
+
+        System.out.println("1111111111111111111111111111111111111111111111111111111111111111111");
+
         return postsService.findById(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public Long delete(@PathVariable Long id){
+        postsService.delete(id);
+
+        return id;
     }
 }
 /*
@@ -73,7 +85,20 @@ public class PostsApiController {
 
     모든 메서드가 postService를 통하여 저장소와 상호작용하고있다.
 
+    **** 절대 Entity나 혹은 Repository와 직접 상호작용하지 말것! ****
+
     컨트롤러에서 사용자의 기본 정보와 요청값을 받아서 Dto를 통해 Service에 전달한다
     Service는 해당 요청에 맞는 서비스를 제공하며 에러 처리 및 값 수정등을 담당한다. 이때 Service는 Repositiory에 접근할 수 있다.
     작업 후 다시 컨트롤러가 작업을 받고 사용자에게 정보를 보여준다
+
+    다시 정리해보자 IndexController가 생겨서 살짝 꼬였다
+
+    1. 사용자가 ui를 통해 서버에 요청을 보낸다
+    2. IndexController는 요청에 해당하는 html파일을 찾아서 보여준다
+    3. 이때 프론트에서 js에 있는 함수를 호출하며
+    4. 함수에 존재하는 특수한 url를 처리할 수 있는 컨트롤러를 매핑한다, url은 js에 존재한다
+    5. 해당하는 컨트롤러의 메소드를 실행하여 Service를 이용해 내부처리를 한다.
+
+    IndexController는 사용자에게 시각적인것을 보여주고
+    PostsApiController는 사용자의 요청처리를 위임받는다
 * */

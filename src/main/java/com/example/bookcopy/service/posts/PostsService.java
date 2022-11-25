@@ -71,6 +71,14 @@ public class PostsService {
             이렇게 나온 Stream을 toList를 통해 collect하여 List<>로 반환한다
         * */
     }
+
+    @Transactional
+    public void delete(Long id){
+        //orElseThrow를 사용하니 오류가 사라졌다
+        Posts posts = postsRepository.findById(id).orElseThrow(()->new IllegalArgumentException("해당 게시글이 없습니다. id = " + id));
+
+        postsRepository.delete(posts);
+    }
 }
 /*
     book p.106, 113

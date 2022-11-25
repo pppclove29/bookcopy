@@ -2,6 +2,7 @@ package com.example.bookcopy.web;
 
 import com.example.bookcopy.domain.posts.Posts;
 import com.example.bookcopy.domain.posts.PostsRepository;
+import com.example.bookcopy.web.dto.PostsDeleteRequestDto;
 import com.example.bookcopy.web.dto.PostsSaveRequestDto;
 import com.example.bookcopy.web.dto.PostsUpdateRequestDto;
 import org.junit.After;
@@ -31,8 +32,10 @@ public class PostsApiControllerTest {
     @LocalServerPort
     private int port;
 
+    // 이거 메소드 너무 많다 일단 exchange로 해보자
     @Autowired
     private TestRestTemplate restTemplate;
+
 
     @Autowired
     private PostsRepository postsRepository;
@@ -43,7 +46,7 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    public void PostsRegi() throws Exception{
+    public void PostsSave() throws Exception{
         String title = "title";
         /*
             오타를 냈다고 가정하고 titel이라고 바꿔보자
@@ -90,7 +93,7 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    public void PostsRevise() throws Exception{
+    public void PostsUpdate() throws Exception{
         Posts savedPosts = postsRepository.save(Posts.builder()
                                                         .title("title")
                                                         .content("content")
@@ -128,6 +131,46 @@ public class PostsApiControllerTest {
         assertThat(all.get(0).getContent()).isEqualTo(E_content);
 
         // 테스트 실행결과 insert와 update가 제대로 실행됨을 알 수 있다.
+    }
+
+    @Test
+    public void FindByID() throws Exception{
+        // 글 생성 -> id로 검색 -> 해당 값 검증
+
+        String title = "title";
+        String content = "content";
+
+        // 글 생성
+        Posts savePost = postsRepository.save(Posts.builder().title(title).content(content).build());
+
+
+    }
+
+    @Test // 책에 없는 내가 임의로 만든 Test
+    public void Delete() throws Exception{
+        // 생각을 해보자
+        // 글 생성 -> 그 글을 삭제 -> DB에 제대로 반영되었는지 확인
+
+        Long deleteID = 1L;
+
+        Posts savePost = postsRepository.save(Posts.builder()
+                .title("title")
+                .content("content")
+                .author("author")
+                .build()); // 글 하나 생성
+
+        PostsDeleteRequestDto requestDto = PostsDeleteRequestDto.builder().id(deleteID).build();
+
+        HttpEntity<PostsDeleteRequestDto> requstEntity= new HttpEntity<>(requestDto);
+
+        String url =  "http://localhost:" + port + "/api/v1/posts/" + deleteID;
+        ResponseEntity<Long> res = restTemplate.exchange(url,HttpMethod.DELETE, requstEntity,Long.class);
+
+        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+        assertThat(res.getBody()).isGreaterThan(0L);
+
+        Long cnt = postsRepository.count();
+        assertThat(cnt).isEqualTo(0);
     }
 }
 

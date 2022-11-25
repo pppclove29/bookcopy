@@ -12,5 +12,4 @@ public class BookcopyApplication { // 프로젝트 최상단 위치, 모든 객�
 		// Tomcat 설치 불필요, 내장 WAS 사용, 스프링 부트로 만들어진 Jar 사용
 		SpringApplication.run(BookcopyApplication.class, args);
 	}
-
 }
