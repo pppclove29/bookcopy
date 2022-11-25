@@ -1,0 +1,8 @@
+이야 위에 프로퍼티스에는 주석으로던 뭐던 한글로 적으면 다 깨져버린다
+
+뭔가 많이 적어놨는데 다 날아갔다 얏호~
+
+spring.jpa.properties.hibernate.dialect=org.hibernate.dialect.MySQL5InnoDBDialect 에 관한 내용이였던거 같다
+아마 데이터베이스의 지정과 jpa에서의 쿼리문 변경에 대한 처리를 담당했던 것 같다
+
+그리고 어떤 쿼리문이  실행되었는지 확인하기 위해 spring.jpa.show-sql=true 를 사용했다.
