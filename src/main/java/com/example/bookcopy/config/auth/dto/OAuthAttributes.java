@@ -59,7 +59,7 @@ public class OAuthAttributes {
                 .name(name)
                 .email(email)
                 .picture(picture)
-                .role(Role.GUEST) // USER로 바꾼 후에는 제대로 작동함을 알 수 있다. 그럼 어디서 권한을 막은 것일까?
+                .role(Role.USER) // USER로 바꾼 후에는 제대로 작동함을 알 수 있다. 그럼 어디서 권한을 막은 것일까? SecurityConfig에서 권한을 막는다
                 .build();
     }
 }

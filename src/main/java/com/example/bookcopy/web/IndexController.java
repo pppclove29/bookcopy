@@ -1,6 +1,8 @@
 package com.example.bookcopy.web;
 
 import com.example.bookcopy.config.auth.LoginUser;
+import com.example.bookcopy.config.auth.dto.MakeLogTest.EmptyClass;
+import com.example.bookcopy.config.auth.dto.MakeLogTest.MakeLog;
 import com.example.bookcopy.config.auth.dto.SessionUser;
 import com.example.bookcopy.service.posts.PostsService;
 import com.example.bookcopy.web.dto.PostsResponseDto;
@@ -11,6 +13,8 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.servlet.http.HttpSession;
+
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 
 
 @RequiredArgsConstructor
@@ -68,6 +72,24 @@ public class IndexController {
             즉, LoginUserArgumentResolver는 스캔 대상이 되어 자동으로 Bean으로 등록된다.
             WebConfig에서는 해당 Bean객체를 생성자를 통한 자동 의존 주입을 통해 사용한다
 
+            글 하나를 더 찾았다
+            @PathVariable과 @RequestBody 또한 값을 받아올때 HandlerMethodArgumentResolver를 사용한다고 한다
+
+            그렇다면 이해가 된다. @LoginUser 또한 HandlerMethodArgumentResolver를 사용하고 해당 조건에 해당하므로
+            세선이 반환된다.
+
+            그런데 다른 코드에서도 이미 @PathVariable과 @RequestBody 를 많이 사용했다
+
+            의문 1. HandlerMethodArgumentResolver가 없었을 때에는 왜 기존에는 잘 돌아갔는가?
+            의문 2. 기본값이 정해져 있어서 잘 돌아갔던거라면 어떻게 @LoginUser만 WebConfig에 영향을 받게 할 수 있는가?
+
+            글을 뒤져본 결과로 어림잡아 추측해보면 일단 모든 파라미터에 대해서 핸들러가 작동하고
+            그 중 Resolver에 부합한 파라미터가 나오면 아래에 값 변조를 실행하는 것 같다
+            모든 핸들러가 실행되기전 파라미터 값을 인터셉트하여 값을 대조 및 변조한다
+
+            그렇다면 한번 동일하게 만들어서 값을 변조해보자
+            @Pathvaliable을 Resolver로 감지해서 값을 변조해보자 목표는 postsUpdate 메소드이다
+
         */
 
         if (user != null) {
@@ -83,12 +105,17 @@ public class IndexController {
     }
 
     @GetMapping("/posts/update/{id}")
-    public String postsUpdate(@PathVariable Long id, Model model) {
+    public String postsUpdate(@PathVariable Long id, Model model, @MakeLog EmptyClass emptyClass) {
 
         //글 하나를 찾는다
         PostsResponseDto dto = postsService.findById(id);
         //해당 글을 posts로 쏜다
         model.addAttribute("post", dto);
+
+        if(emptyClass.isT())
+            log.println("진실!");
+        else
+            log.println("거짓!");
 
         return "posts-update";
     }
