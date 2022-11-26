@@ -5,6 +5,7 @@ import org.springframework.data.jpa.repository.Query;
 
 import java.util.List;
 
+// 얘가 DAO인가?
 public interface PostsRepository extends JpaRepository<Posts, Long> {
     /*
         메소드가 굉장히 많다
