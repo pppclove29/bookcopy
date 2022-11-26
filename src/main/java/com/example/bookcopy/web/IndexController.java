@@ -1,5 +1,6 @@
 package com.example.bookcopy.web;
 
+import com.example.bookcopy.config.auth.dto.SessionUser;
 import com.example.bookcopy.service.posts.PostsService;
 import com.example.bookcopy.web.dto.PostsResponseDto;
 import lombok.RequiredArgsConstructor;
@@ -9,12 +10,15 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
+import javax.servlet.http.HttpSession;
+
 
 @RequiredArgsConstructor
 @Controller
 public class IndexController {
 
     private final PostsService postsService;
+    private final HttpSession httpSession;
 
     @GetMapping("/")
     public String index(Model model){
@@ -29,6 +33,16 @@ public class IndexController {
             이게 맞나?
         * */
         model.addAttribute("posts",postsService.findAllDesc());
+
+        //CustomOAuth2UserService에서 user를 Key로 SessionUser을 저장했다
+        //다시 꺼낼땐 다운캐스팅이 필요하다
+        SessionUser user = (SessionUser) httpSession.getAttribute("user");
+
+        if(user!=null){
+            model.addAttribute("userName", user.getName());
+            //html에 존재하는 {{username}}에 사용할 userName을 모델에 싣는다
+        }
+
         return "index";
     } // -> src/main/resources/templates + /index + .mustache
 

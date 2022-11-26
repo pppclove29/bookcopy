@@ -1,6 +1,6 @@
 plugins {
 	id 'java'
-	id 'org.springframework.boot' version '2.6.5'
+	id 'org.springframework.boot' version '2.7.5'
 	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
@@ -14,16 +14,15 @@ repositories {
 dependencies {
 	// SpringBoot Starter
 	implementation 'org.springframework.boot:spring-boot-starter'
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 
 	// Junit & lombok
 	implementation 'junit:junit:4.13.2'
-	compileOnly 'org.projectlombok:lombok'
+	compileOnly 'org.projectlombok:lombok:1.18.24'
 	annotationProcessor 'org.projectlombok:lombok'
 
-	// JPA
+implementation 'org.hibernate:hibernate-core:6.1.5.Final'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 
 	// 인메모리 database
@@ -31,6 +30,11 @@ dependencies {
 
 	//template
 	implementation 'org.springframework.boot:spring-boot-starter-mustache'
+
+	// Spring Security
+	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
+
+	implementation group :'org.javassist', name : 'javassist', version:'3.15.0-GA'
 }
 
 tasks.named('test') {
