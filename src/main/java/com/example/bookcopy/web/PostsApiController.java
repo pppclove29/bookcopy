@@ -10,6 +10,8 @@ import org.springframework.web.context.annotation.RequestScope;
 
 import java.sql.SQLOutput;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
+
 @RequiredArgsConstructor
 @RestController // Controller + ResponseBody <- 얜 또 뭐야
 /*
@@ -49,13 +51,13 @@ public class PostsApiController {
     public PostsResponseDto findById(
             @PathVariable Long id) {
 
-        System.out.println("1111111111111111111111111111111111111111111111111111111111111111111");
-
         return postsService.findById(id);
     }
 
-    @DeleteMapping("/{id}")
-    public Long delete(@PathVariable Long id){
+    @PostMapping("/deletePost/{id}")
+    public Long delete(
+            @PathVariable Long id){
+
         postsService.delete(id);
 
         return id;

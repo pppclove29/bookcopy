@@ -5,22 +5,34 @@ import com.example.bookcopy.domain.posts.PostsRepository;
 import com.example.bookcopy.web.dto.PostsDeleteRequestDto;
 import com.example.bookcopy.web.dto.PostsSaveRequestDto;
 import com.example.bookcopy.web.dto.PostsUpdateRequestDto;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.After;
+import org.junit.Before;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
+import org.springframework.http.*;
+import org.springframework.lang.Nullable;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.context.WebApplicationContext;
 
 import java.util.List;
 
+import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 // 스프링 러너를 스프링 실행자로 쓴다는데 잘 모르겠음
 @RunWith(SpringRunner.class)
@@ -32,6 +44,21 @@ public class PostsApiControllerTest {
     @LocalServerPort
     private int port;
 
+
+    @Autowired
+    private WebApplicationContext context;
+
+    private MockMvc mockMvc;
+
+    @BeforeEach
+    public void setup() {
+        mockMvc = MockMvcBuilders
+                .webAppContextSetup(context)
+                .apply(springSecurity())
+                .build(); // 자주보던 빌더의 모습이다
+    }
+
+
     // 이거 메소드 너무 많다 일단 exchange로 해보자
     @Autowired
     private TestRestTemplate restTemplate;
@@ -40,13 +67,23 @@ public class PostsApiControllerTest {
     @Autowired
     private PostsRepository postsRepository;
 
-    @After // 검증이 끝나면 지운다
-    public void tearDown() throws Exception{
+    @AfterEach // 검증이 끝나면 지운다
+    public void tearDown() throws Exception {
         postsRepository.deleteAll();
     }
 
     @Test
-    public void PostsSave() throws Exception{
+    /*
+    302 리다이렉팅 에러, 권한이 없는 사용자를 자동으로 리다이렉트해서 생긴 에러다
+    테스트시 임시로 권한을 부여한다
+    될줄 알았는데 전혀 되지 않았다
+
+    이유 : 해당 애너테이션은 MokeMvc에서만 작동한다고 한다, 즉 해당 클래스에 MockMvc를 가져와서 사용해야한다
+
+    @After에 이은 @Before을 사용한다
+     */
+    @WithMockUser(roles = "USER")
+    public void PostsSave() throws Exception {
         String title = "title";
         /*
             오타를 냈다고 가정하고 titel이라고 바꿔보자
@@ -73,8 +110,6 @@ public class PostsApiControllerTest {
         // 서버가 열린 후 해당 url로 요청을 보내보자
         String url = "http://localhost:" + port + "/api/v1/posts";
 
-
-
         /*
             얜 또또 뭘까 간단하게만 검색해서 찾아보자
             1. ResponseEntity : HttpRequest를 상속 -> 결과 데이터와 HTTP 상태코드를 직접 제어 가능
@@ -82,10 +117,21 @@ public class PostsApiControllerTest {
             2. restTemplate   : Rest Api 요청 후 응답까지 되도록 설계되었다. 여러가지 메소드를 가지고 있다
             2-1. postForEntity: HTTP Post 요청 후 결과는 ResponseEntity로 반환
         * */
-        ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, requestDto, Long.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+        /*
+            ResponseEntity<Long> responseEntity = restTemplate.postForEntity(url, requestDto, Long.class);
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(responseEntity.getBody()).isGreaterThan(0L);
+            인증에 사용될 권한을 부여받기위해 MockMvc를 사용한 인증을 시도한다
+        */
+
+        // mockMvc가 null일 수 있다며 에러를 벹는다, 교재와 동일하게도 해봤지만 안되는걸보면 컴파일러가 깐깐해진듯하다
+
+        mockMvc.perform(post(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(requestDto)))
+                .andExpect(status().isOk());
+
 
         List<Posts> all = postsRepository.findAll();
         assertThat(all.get(0).getTitle()).isEqualTo(title);
@@ -93,26 +139,26 @@ public class PostsApiControllerTest {
     }
 
     @Test
-    public void PostsUpdate() throws Exception{
+    @WithMockUser(roles = "USER")
+    public void PostsUpdate() throws Exception {
         Posts savedPosts = postsRepository.save(Posts.builder()
-                                                        .title("title")
-                                                        .content("content")
-                                                        .author("author")
-                                                        .build()); // 업데이트할 게시글을 만든다
+                .title("title_for_update")
+                .content("content_for_update")
+                .author("author_for_update")
+                .build()); // 업데이트할 게시글을 만든다
 
         Long updateID = savedPosts.getId();
-        String E_title = "E_title";
-        String E_content = "E_content"; // 기존 게시글의 ID를 가져오고 변경될 변수들을 설정한다
+        String E_title = "E_title_for_update";
+        String E_content = "E_content_for_update"; // 기존 게시글의 ID를 가져오고 변경될 변수들을 설정한다
 
         // 서버에 요청할 바디를 생성한다
         PostsUpdateRequestDto postsUpdateRequestDto = PostsUpdateRequestDto.builder()
-                                                                            .title(E_title)
-                                                                            .content(E_content)
-                                                                            .build();
+                .title(E_title)
+                .content(E_content)
+                .build();
 
-        String url =  "http://localhost:" + port + "/api/v1/posts/" + updateID;
+        String url = "http://localhost:" + port + "/api/v1/posts/" + updateID;
 
-        HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(postsUpdateRequestDto);
 
         /*
             Put친구는 뒤지게 까다롭다 putforEntity도 없다
@@ -120,57 +166,74 @@ public class PostsApiControllerTest {
             그렇다면 위에 PostsRegi도 동일하게 할 수 있을까?
 
             테스트는 통과하는거보니 문제는 없는거 같다 다만 코드를 줄이기 위해 혹은 모종의 이유로 post어저구를 쓰는거 같다
-        * */
-        ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
 
-        assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(responseEntity.getBody()).isGreaterThan(0L);
+            HttpEntity<PostsUpdateRequestDto> requestEntity = new HttpEntity<>(postsUpdateRequestDto);
+            ResponseEntity<Long> responseEntity = restTemplate.exchange(url, HttpMethod.PUT, requestEntity, Long.class);
+
+            assertThat(responseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(responseEntity.getBody()).isGreaterThan(0L);
+
+            권한 부여를 위해 역시나 mockMvc로 교체
+        * */
+
+
+        // 대충격 이거 왜 true? ㅋㅋㅋ
+        log.println(mockMvc == null);
+
+
+        mockMvc.perform(put(url)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(new ObjectMapper().writeValueAsString(postsUpdateRequestDto)))
+                .andExpect(status().isOk());
 
         List<Posts> all = postsRepository.findAll();
+
+        // 3개나 처들어가있다 뭔가 어디선가 지우질 않았다
+        log.println(all.size());
+
         assertThat(all.get(0).getTitle()).isEqualTo(E_title);
         assertThat(all.get(0).getContent()).isEqualTo(E_content);
 
-        // 테스트 실행결과 insert와 update가 제대로 실행됨을 알 수 있다.
-    }
-
-    @Test
-    public void FindByID() throws Exception{
-        // 글 생성 -> id로 검색 -> 해당 값 검증
-
-        String title = "title";
-        String content = "content";
-
-        // 글 생성
-        Posts savePost = postsRepository.save(Posts.builder().title(title).content(content).build());
-
 
     }
 
-    @Test // 책에 없는 내가 임의로 만든 Test
-    public void Delete() throws Exception{
+
+    @Test // 책에 없는 내가 임의로 만든 Test, MockMvc역시 따라해보자
+    @WithMockUser(roles = "USER")
+    public void Delete() throws Exception {
         // 생각을 해보자
         // 글 생성 -> 그 글을 삭제 -> DB에 제대로 반영되었는지 확인
 
         Long deleteID = 1L;
 
-        Posts savePost = postsRepository.save(Posts.builder()
-                .title("title")
-                .content("content")
-                .author("author")
+        postsRepository.save(Posts.builder()
+                .title("title_for_delete")
+                .content("content_for_delete")
+                .author("author_for_delete")
                 .build()); // 글 하나 생성
 
-        PostsDeleteRequestDto requestDto = PostsDeleteRequestDto.builder().id(deleteID).build();
+        PostsDeleteRequestDto requestDto = PostsDeleteRequestDto
+                .builder()
+                .id(deleteID)
+                .build();
 
-        HttpEntity<PostsDeleteRequestDto> requstEntity= new HttpEntity<>(requestDto);
+        /*
+            HttpEntity<PostsDeleteRequestDto> requstEntity= new HttpEntity<>(requestDto);
 
-        String url =  "http://localhost:" + port + "/api/v1/posts/" + deleteID;
-        ResponseEntity<Long> res = restTemplate.exchange(url,HttpMethod.DELETE, requstEntity,Long.class);
 
-        assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
-        assertThat(res.getBody()).isGreaterThan(0L);
+            ResponseEntity<Long> res = restTemplate.exchange(url,HttpMethod.DELETE, requstEntity,Long.class);
 
-        Long cnt = postsRepository.count();
-        assertThat(cnt).isEqualTo(0);
+            assertThat(res.getStatusCode()).isEqualTo(HttpStatus.OK);
+            assertThat(res.getBody()).isGreaterThan(0L);
+         */
+
+        String url = "http://localhost:" + port + "/api/v1/posts/" + deleteID;
+
+        // 테스트 실패, delete는 405에러가 난다
+        mockMvc.perform(delete(url))
+                .andExpect(status().isOk());
+
+        assertThat(postsRepository.findById(deleteID)).isEmpty();
     }
 }
 

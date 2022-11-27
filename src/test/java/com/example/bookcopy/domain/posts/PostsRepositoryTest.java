@@ -1,6 +1,7 @@
 package com.example.bookcopy.domain.posts;
 
 import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +21,8 @@ public class PostsRepositoryTest {
     @Autowired
     PostsRepository postsRepository;
 
-    @After //  Junit 단위 테스트가 끝날때마다 호출된데, 다른 클래스에서 끝난 테스트에서도 해당 메소드가 호출될까? 안되겠지? 결론은 안된다
-    public void cleanup(){
+    @AfterEach // 검증이 끝나면 지운다
+    public void tearDown() throws Exception {
         postsRepository.deleteAll();
     }
 
