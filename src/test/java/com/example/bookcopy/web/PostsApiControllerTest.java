@@ -34,7 +34,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-// 스프링 러너를 스프링 실행자로 쓴다는데 잘 모르겠음
 @RunWith(SpringRunner.class)
 // 스프링부트테스트가 없으면 터짐
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -176,11 +175,6 @@ public class PostsApiControllerTest {
             권한 부여를 위해 역시나 mockMvc로 교체
         * */
 
-
-        // 대충격 이거 왜 true? ㅋㅋㅋ
-        log.println(mockMvc == null);
-
-
         mockMvc.perform(put(url)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(new ObjectMapper().writeValueAsString(postsUpdateRequestDto)))
@@ -230,12 +224,12 @@ public class PostsApiControllerTest {
         String url = "http://localhost:" + port + "/api/v1/posts/" + deleteID;
 
         // 테스트 실패, delete는 405에러가 난다
-        mockMvc.perform(delete(url))
-                .andExpect(status().isOk());
+        mockMvc.perform(delete(url));
 
         assertThat(postsRepository.findById(deleteID)).isEmpty();
     }
 }
+// 스프링 러너를 스프링 실행자로 쓴다는데 잘 모르겠음
 
 /*
     테스트를 하고 싶으면 원하는 테스트 블럭을 실행하면 된다

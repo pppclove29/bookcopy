@@ -79,20 +79,22 @@ public class IndexControllerTest {
     @Test
     @WithMockUser(roles = "USER")
     public void UpdatePageLoad() throws Exception{
-        Long id = 1L;
 
         // 글을 업데이트하는거니 글 하나를 등록해야겠지?
-        postsRepository.save(Posts.builder()
+        Posts savePost = postsRepository.save(Posts.builder()
                 .title("title")
                 .content("content")
                 .author("author")
                 .build());
 
-        log.println(postsRepository.findAll().get(0).getId());
-
-        mvc.perform(MockMvcRequestBuilders.get("/posts/update/" + id)
+        mvc.perform(MockMvcRequestBuilders.get("/posts/update/" + savePost.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(content().string(containsString("게시글 수정"))); // 확인해보기
+
+        /*
+            뭔가 이상하다 Test 순서에 따라 결과가 달라진다
+            내가 임의로 만든 Delete Test의 요청 에러때문에 글이 등록만 되고 지워지지 않는거 같다
+        * */
 
         //String body = this.restTemplate.getForObject("/posts/update/" + id, String.class);
 

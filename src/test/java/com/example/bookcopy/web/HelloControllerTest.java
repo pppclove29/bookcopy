@@ -1,10 +1,15 @@
 package com.example.bookcopy.web;
 
+import com.example.bookcopy.config.auth.SecurityConfig;
 import com.example.bookcopy.web.HelloController;
 import org.junit.jupiter.api.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.context.annotation.ComponentScan;
+import org.springframework.context.annotation.FilterType;
+import org.springframework.security.test.context.support.WithMockUser;
+import org.springframework.stereotype.Component;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 
@@ -14,12 +19,27 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(controllers = HelloController.class)
+/*
+    에러의 원흉
+
+    No qualifying bean of type 'com.example.bookcopy.config.auth.CustomOAuth2UserService'
+
+    SecurityConfig는 읽었지만 이것의 생성에 필요한
+    CustomOAuth2UserService를 읽지 않았다
+    @Repository, @Service, @Component는 읽지 못한다
+
+    SecurityConfig는 해당 테스트에 필요 없으므로 읽지 않게 변경하자
+* */
+@WebMvcTest(controllers = HelloController.class,
+excludeFilters = {
+        @ComponentScan.Filter(type = FilterType.ASSIGNABLE_TYPE,classes = SecurityConfig.class)
+})
 public class HelloControllerTest {
     @Autowired
     private MockMvc mvc;
 
     @Test
+    @WithMockUser(roles = "USER")
     public void ReturnHello() throws Exception {
         String hello = "hello";
 
@@ -36,6 +56,7 @@ public class HelloControllerTest {
     }
 
     @Test
+    @WithMockUser(roles = "USER")
     public void ReturnHelloDto() throws Exception {
         String name = "hello";
         int amount = 1000;
@@ -51,6 +72,8 @@ public class HelloControllerTest {
             이건 또 뭐야
             param으로 값을 받아와서
             json으로 검증한다
+
+            assertThat 과 andExpect는 비슷한 역할을 한다
          */
 
     }
