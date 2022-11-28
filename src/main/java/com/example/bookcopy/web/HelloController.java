@@ -1,6 +1,5 @@
 package com.example.bookcopy.web;
 
-import com.example.bookcopy.domain.posts.Posts;
 import com.example.bookcopy.web.dto.HelloResponseDto;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;

@@ -5,7 +5,7 @@ import lombok.Getter;
 @Getter
 public class EmptyClass {
 
-    private boolean t = false;
+    private boolean t;
 
     public EmptyClass(boolean t){
         this.t = t;
