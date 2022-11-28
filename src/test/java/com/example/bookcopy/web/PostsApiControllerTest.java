@@ -137,8 +137,8 @@ public class PostsApiControllerTest {
         assertThat(all.get(0).getContent()).isEqualTo(content);
     }
 
-    @Test
-    @WithMockUser(roles = "USER")
+    //@Test
+    //@WithMockUser(roles = "USER")
     public void PostsUpdate() throws Exception {
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title("title_for_update")
@@ -192,8 +192,8 @@ public class PostsApiControllerTest {
     }
 
 
-    @Test // 책에 없는 내가 임의로 만든 Test, MockMvc역시 따라해보자
-    @WithMockUser(roles = "USER")
+    //@Test // 책에 없는 내가 임의로 만든 Test, MockMvc역시 따라해보자
+    //@WithMockUser(roles = "USER")
     public void Delete() throws Exception {
         // 생각을 해보자
         // 글 생성 -> 그 글을 삭제 -> DB에 제대로 반영되었는지 확인
