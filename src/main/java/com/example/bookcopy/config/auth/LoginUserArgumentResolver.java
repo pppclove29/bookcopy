@@ -12,8 +12,6 @@ import org.springframework.web.method.support.ModelAndViewContainer;
 
 import javax.servlet.http.HttpSession;
 
-import static jdk.nashorn.internal.runtime.regexp.joni.Config.log;
-
 @RequiredArgsConstructor
 @Component
 public class LoginUserArgumentResolver implements HandlerMethodArgumentResolver {
