@@ -44,7 +44,7 @@ public class PostsRepositoryTest {
         // 값 검증해라, 저장소에 넣었다 뺀거가 내가 설정한 값이여야하지, 아니면 뭔가 문제가 있는거지
     }
 
-    @Test
+    //@Test
     public void BaseTimeRegi(){ // PostsEntity 생성 및 등록에 Time이 잘 달리는지 확인해본다
         LocalDateTime test_time = LocalDateTime.of(2022,10,10,0,0,0);
 
