@@ -3,14 +3,14 @@ package com.example.bookcopy.web;
 import com.example.bookcopy.config.auth.SecurityConfig;
 import com.example.bookcopy.web.HelloController;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.FilterType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.stereotype.Component;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 
 
@@ -18,7 +18,7 @@ import static org.hamcrest.Matchers.is;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 /*
     에러의 원흉
 
@@ -38,8 +38,8 @@ public class HelloControllerTest {
     @Autowired
     private MockMvc mvc;
 
-    //@Test
-    //@WithMockUser(roles = "USER")
+    @Test
+    @WithMockUser(roles = "USER")
     public void ReturnHello() throws Exception {
         String hello = "hello";
 

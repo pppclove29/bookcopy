@@ -6,20 +6,17 @@ import com.example.bookcopy.web.dto.PostsDeleteRequestDto;
 import com.example.bookcopy.web.dto.PostsSaveRequestDto;
 import com.example.bookcopy.web.dto.PostsUpdateRequestDto;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.extension.ExtendWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.lang.Nullable;
 import org.springframework.security.test.context.support.WithMockUser;
-import org.springframework.test.context.junit4.SpringRunner;
+import org.springframework.test.context.junit.jupiter.SpringExtension;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
@@ -34,7 +31,7 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@RunWith(SpringRunner.class)
+@ExtendWith(SpringExtension.class)
 // 스프링부트테스트가 없으면 터짐
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class PostsApiControllerTest {
@@ -137,8 +134,8 @@ public class PostsApiControllerTest {
         assertThat(all.get(0).getContent()).isEqualTo(content);
     }
 
-    //@Test
-    //@WithMockUser(roles = "USER")
+    @Test
+    @WithMockUser(roles = "USER")
     public void PostsUpdate() throws Exception {
         Posts savedPosts = postsRepository.save(Posts.builder()
                 .title("title_for_update")
@@ -233,7 +230,7 @@ public class PostsApiControllerTest {
 
 /*
     테스트를 하고 싶으면 원하는 테스트 블럭을 실행하면 된다
-    @RunWith로 테스트 도중 함께 돌릴 클래스를 지정
+    @ExtendWith로 테스트 도중 함께 돌릴 클래스를 지정
     @SprintBootTest는 일단 필요
     @Test나 @After에는 throw Exception을 기본으로 탑재하는 것이 좋아보인다
 * */

@@ -1,50 +1,41 @@
-plugins {
+plugins { // (1)
+	id 'org.springframework.boot' version '2.4.1' // RELEASE 삭제
+	id 'io.spring.dependency-management' version '1.0.10.RELEASE'
 	id 'java'
-	id 'org.springframework.boot' version '2.6.5'
-	id 'io.spring.dependency-management' version '1.0.15.RELEASE'
 }
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
+group 'com.jojoldu.book'
+version '1.0.4-SNAPSHOT-'+new Date().format("yyyyMMddHHmmss")
+sourceCompatibility = 1.8
 
 repositories {
 	mavenCentral()
+	jcenter()
+}
+
+// for Junit 5
+test { // (2)
+	useJUnitPlatform()
 }
 
 dependencies {
-	// SpringBoot Starter
-	implementation 'org.springframework.boot:spring-boot-starter'
-	testImplementation 'org.springframework.boot:spring-boot-starter-test'
-	implementation 'org.springframework.boot:spring-boot-starter-web'
+	//(3)
+	implementation('org.springframework.boot:spring-boot-starter-web')
+	implementation('org.springframework.boot:spring-boot-starter-mustache')
 
-	// Junit & lombok
-	implementation 'junit:junit:4.13.2'
-	compileOnly 'org.projectlombok:lombok'
-	annotationProcessor 'org.projectlombok:lombok'
+	// lombok
+	implementation('org.projectlombok:lombok')
+	annotationProcessor('org.projectlombok:lombok')
+	testImplementation('org.projectlombok:lombok')
+	testAnnotationProcessor('org.projectlombok:lombok')
 
-	// JPA
-	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+	implementation('org.springframework.boot:spring-boot-starter-data-jpa')
+	implementation("org.mariadb.jdbc:mariadb-java-client")
+	implementation('com.h2database:h2')
 
-	// 인메모리 database
-	runtimeOnly 'com.h2database:h2'
+	implementation('org.springframework.boot:spring-boot-starter-oauth2-client') // 권한 관련
+	implementation('org.springframework.session:spring-session-jdbc') // 권한 관련
 
-	//template
-	implementation 'org.springframework.boot:spring-boot-starter-mustache'
-
-	// spring security
-	implementation 'org.springframework.boot:spring-boot-starter-oauth2-client'
-	testImplementation 'org.springframework.security:spring-security-test'
-
-
-	implementation 'org.springframework.session:spring-session-jdbc'
-
-	// Maria DB driver
-	implementation 'org.mariadb.jdbc:mariadb-java-client'
-}
-
-tasks.named('test') {
-	useJUnitPlatform()
-}
-jar{
-	enabled = false
+	testImplementation('org.springframework.boot:spring-boot-starter-test')
+	testImplementation("org.springframework.security:spring-security-test") // 권한 관련
 }
