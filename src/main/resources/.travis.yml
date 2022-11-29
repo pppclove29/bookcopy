@@ -1,0 +1,23 @@
+language: java
+jdk :
+  - openjdk8
+
+branches:
+  only:
+    - master
+
+# Trabis Ci Server Home
+cache:
+  directories:
+    - '$HOME/.m2/repository'
+    - '$HOME/.gradle'
+
+script: "./gradlew clean build"
+
+# Send Email when Ci complete
+notifications:
+  email:
+    recipients:
+      - pppclove29@naver.com
+
+# Book Page 326

@@ -5,3 +5,5 @@
 3. @After, @Before가 아닌 @AfterEach, @BeforeEach 사용하기
 
 4. mvc의 경우 delete는 405에러가 생김, 아직 미해결 문제
+
+5. 네이버 로그인하면 500에러가 생김 미해결
