@@ -12,6 +12,9 @@ repositories {
 	mavenCentral()
 	jcenter()
 }
+jar{
+	enabled = false
+}
 
 // for Junit 5
 test { // (2)
