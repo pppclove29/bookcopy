@@ -37,6 +37,9 @@ dependencies {
 
 
 	implementation 'org.springframework.session:spring-session-jdbc'
+
+	// Maria DB driver
+	implementation 'org.mariadb.jdbc:mariadb-java-client'
 }
 
 tasks.named('test') {
